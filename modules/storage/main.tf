@@ -133,14 +133,18 @@ data "aws_iam_policy_document" "storage_bucket" {
 }
 
 data "aws_iam_policy_document" "storage_django" {
+  # s3:ListBucket isn't needed: only django-storages' `listdir()` requires it, which is never called
   statement {
     actions = [
-      # TODO Figure out minimal set of permissions django storages needs for S3
-      "s3:*",
+      # Reading files, `head_object` for size/modified_time/exists, presigned download URLs
+      "s3:GetObject",
+      # Saving files, multipart uploads, presigned upload URLs
+      "s3:PutObject",
+      # Deleting files
+      "s3:DeleteObject",
+      # Called by boto3 internally when a multipart upload fails partway through
+      "s3:AbortMultipartUpload",
     ]
-    resources = [
-      aws_s3_bucket.storage.arn,
-      "${aws_s3_bucket.storage.arn}/*",
-    ]
+    resources = ["${aws_s3_bucket.storage.arn}/*"]
   }
 }
