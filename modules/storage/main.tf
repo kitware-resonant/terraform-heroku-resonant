@@ -111,11 +111,8 @@ data "aws_iam_policy_document" "storage_bucket" {
       identifiers = ["*"]
       type        = "*"
     }
-    resources = [
-      # To prevent a circular reference, can't use "aws_s3_bucket.storage.arn" here
-      "arn:aws:s3:::${var.bucket_name}/*"
-    ]
-    actions = ["s3:PutObject"]
+    resources = ["${aws_s3_bucket.storage.arn}/*"]
+    actions   = ["s3:PutObject"]
 
     # Both conditions must pass to trigger a deny
     condition {
