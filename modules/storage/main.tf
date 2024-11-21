@@ -11,12 +11,10 @@ resource "aws_s3_bucket_ownership_controls" "storage" {
   }
 }
 
-resource "aws_s3_bucket_acl" "storage" {
-  bucket = aws_s3_bucket.storage.id
-  # This is the default for new buckets, but any other value prevents "BucketOwnerEnforced"
-  # ownership controls
-  acl = "private"
-}
+# Don't use an aws_s3_bucket_acl resource. Attempting any ACL operation on a bucket with
+# "BucketOwnerEnforced" ownership controls (which is the default for new buckets) will fail.
+# If importing old buckets, a public canned ACL policy might need to be manually disabled before
+# applying "BucketOwnerEnforced" ownership controls will succeed.
 
 resource "aws_s3_bucket_public_access_block" "storage" {
   bucket = aws_s3_bucket.storage.id
