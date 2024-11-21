@@ -14,10 +14,9 @@ resource "heroku_app" "heroku" {
   acm        = true # SSL certs for custom domain
 
   # Auto-created (by addons) config vars:
-  # * CLOUDAMQP_APIKEY
-  # * CLOUDAMQP_URL
   # * DATABASE_URL
   # * PAPERTRAIL_API_TOKEN
+  # * REDIS_URL
   config_vars           = var.config_vars
   sensitive_config_vars = var.sensitive_config_vars
 }
@@ -42,10 +41,10 @@ resource "heroku_addon" "heroku_postgresql" {
   plan   = "heroku-postgresql:${var.postgresql_plan}"
 }
 
-resource "heroku_addon" "heroku_cloudamqp" {
-  count  = var.cloudamqp_plan == null ? 0 : 1
+resource "heroku_addon" "heroku_redis" {
+  count  = var.redis_plan == null ? 0 : 1
   app_id = heroku_app.heroku.id
-  plan   = "cloudamqp:${var.cloudamqp_plan}"
+  plan   = "heroku-redis:${var.redis_plan}"
 }
 
 resource "heroku_addon" "heroku_papertrail" {

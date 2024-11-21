@@ -74,11 +74,11 @@ variable "postgresql_plan" {
   description = "The Postgres add-on plan type, or null to disable."
 }
 
-variable "cloudamqp_plan" {
+variable "redis_plan" {
   type        = string
   nullable    = true
-  default     = "lemur"
-  description = "The CloudAMQP add-on plan type, or null to disable."
+  default     = "mini"
+  description = "The Heroku Data for Redis add-on plan type, or null to disable."
 }
 
 variable "papertrail_plan" {
