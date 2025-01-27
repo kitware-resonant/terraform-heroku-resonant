@@ -1,10 +1,13 @@
 resource "aws_ses_domain_identity" "smtp" {
-  domain = var.fqdn
+  # "www." will also be included as a subdomain,
+  # but specifying it is not allowed:
+  # https://docs.aws.amazon.com/ses/latest/dg/creating-identities.html
+  domain = trimprefix("www.", var.fqdn)
 }
 
 resource "aws_route53_record" "smtp_verification" {
   zone_id = var.route53_zone_id
-  name    = "_amazonses.${var.fqdn}"
+  name    = "_amazonses.${aws_ses_domain_identity.smtp.domain}"
   type    = "TXT"
   ttl     = "1800"
   records = [aws_ses_domain_identity.smtp.verification_token]
@@ -22,7 +25,7 @@ resource "aws_ses_domain_dkim" "smtp" {
 resource "aws_route53_record" "smtp_dkim" {
   count   = 3
   zone_id = var.route53_zone_id
-  name    = "${element(aws_ses_domain_dkim.smtp.dkim_tokens, count.index)}._domainkey.${var.fqdn}"
+  name    = "${element(aws_ses_domain_dkim.smtp.dkim_tokens, count.index)}._domainkey.${aws_ses_domain_dkim.smtp.domain}"
   type    = "CNAME"
   ttl     = "1800"
   records = ["${element(aws_ses_domain_dkim.smtp.dkim_tokens, count.index)}.dkim.amazonses.com"]
