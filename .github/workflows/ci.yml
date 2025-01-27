@@ -16,3 +16,8 @@ jobs:
       - name: Lint Terraform
         run: |
           terraform fmt -recursive -check
+      - name: Validate Terraform example
+        run: |
+          terraform init -backend=false
+          terraform validate
+        working-directory: examples/basic
