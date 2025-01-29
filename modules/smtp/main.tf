@@ -2,7 +2,7 @@ resource "aws_ses_domain_identity" "smtp" {
   # "www." will also be included as a subdomain,
   # but specifying it is not allowed:
   # https://docs.aws.amazon.com/ses/latest/dg/creating-identities.html
-  domain = trimprefix("www.", var.fqdn)
+  domain = trimprefix(var.fqdn, "www.")
 }
 
 resource "aws_route53_record" "smtp_verification" {
