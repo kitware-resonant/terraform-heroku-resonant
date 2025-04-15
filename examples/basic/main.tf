@@ -32,10 +32,11 @@ resource "random_pet" "instance_name" {
 module "resonant" {
   source = "kitware-resonant/resonant/heroku"
 
-  project_slug     = random_pet.instance_name.id
-  route53_zone_id  = data.aws_route53_zone.this.zone_id
-  heroku_team_name = data.heroku_team.this.name
-  subdomain_name   = random_pet.instance_name.id
+  project_slug           = random_pet.instance_name.id
+  route53_zone_id        = data.aws_route53_zone.this.zone_id
+  heroku_team_name       = data.heroku_team.this.name
+  subdomain_name         = random_pet.instance_name.id
+  django_settings_module = "resonant.settings.heroku_production"
 
   // Provisional an optional EC2 worker too
   ec2_worker_ssh_public_key    = data.local_file.ssh_public_key.content

@@ -23,6 +23,12 @@ variable "route53_zone_id" {
   description = "The Route 53 zone ID to create new DNS records within."
 }
 
+variable "django_settings_module" {
+  type        = string
+  nullable    = false
+  description = "The import path used to set DJANGO_SETTINGS_MODULE."
+}
+
 # Optional variables
 variable "heroku_app_name" {
   type        = string
