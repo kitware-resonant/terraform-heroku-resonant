@@ -10,8 +10,11 @@ resource "heroku_app" "heroku" {
   }
   # The buildpack for the primary language must come last
   # https://devcenter.heroku.com/articles/using-multiple-buildpacks-for-an-app#adding-a-buildpack
-  buildpacks = concat(var.additional_buildpacks, ["heroku/python"])
-  acm        = true # SSL certs for custom domain
+  buildpacks = concat(var.additional_buildpacks, [
+    "https://github.com/dropseed/heroku-buildpack-uv.git",
+    "heroku/python",
+  ])
+  acm = true # SSL certs for custom domain
 
   # Auto-created (by addons) config vars:
   # * CLOUDAMQP_APIKEY
