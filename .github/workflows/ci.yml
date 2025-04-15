@@ -8,12 +8,13 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_wrapper: false
-      - name: Lint Terraform
+      - name: Lint Terraform code
         run: |
           terraform fmt -recursive -check
       - name: Validate Terraform example
