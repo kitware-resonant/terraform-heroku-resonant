@@ -52,13 +52,13 @@ variable "django_default_from_email" {
   description = "The default email address which Django will send from."
 }
 
-variable "django_cors_origin_whitelist" {
+variable "django_cors_allowed_origins" {
   type        = list(string)
   nullable    = false
   default     = []
   description = "Domains which Django will allow to make CORS requests."
 }
-variable "django_cors_origin_regex_whitelist" {
+variable "django_cors_allowed_origin_regexes" {
   type        = list(string)
   nullable    = false
   default     = []
