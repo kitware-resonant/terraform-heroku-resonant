@@ -23,6 +23,12 @@ variable "route53_zone_id" {
   description = "The Route 53 zone ID to create new DNS records within."
 }
 
+variable "django_settings_module" {
+  type        = string
+  nullable    = false
+  description = "The import path used to set DJANGO_SETTINGS_MODULE."
+}
+
 # Optional variables
 variable "heroku_app_name" {
   type        = string
@@ -52,13 +58,13 @@ variable "django_default_from_email" {
   description = "The default email address which Django will send from."
 }
 
-variable "django_cors_origin_whitelist" {
+variable "django_cors_allowed_origins" {
   type        = list(string)
   nullable    = false
   default     = []
   description = "Domains which Django will allow to make CORS requests."
 }
-variable "django_cors_origin_regex_whitelist" {
+variable "django_cors_allowed_origin_regexes" {
   type        = list(string)
   nullable    = false
   default     = []

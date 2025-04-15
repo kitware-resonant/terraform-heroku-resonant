@@ -41,11 +41,11 @@ module "heroku" {
     {
       AWS_ACCESS_KEY_ID                  = aws_iam_access_key.heroku_user.id
       AWS_DEFAULT_REGION                 = data.aws_region.current.name
-      DJANGO_CONFIGURATION               = "HerokuProductionConfiguration"
       DJANGO_ALLOWED_HOSTS               = local.fqdn
-      DJANGO_CORS_ORIGIN_WHITELIST       = join(",", var.django_cors_origin_whitelist)
-      DJANGO_CORS_ORIGIN_REGEX_WHITELIST = join(",", var.django_cors_origin_regex_whitelist)
+      DJANGO_CORS_ALLOWED_ORIGINS        = join(",", var.django_cors_allowed_origins)
+      DJANGO_CORS_ALLOWED_ORIGIN_REGEXES = join(",", var.django_cors_allowed_origin_regexes)
       DJANGO_DEFAULT_FROM_EMAIL          = local.django_default_from_email
+      DJANGO_SETTINGS_MODULE             = var.django_settings_module
       DJANGO_STORAGE_BUCKET_NAME         = local.storage_bucket_name
     },
     # Pass var.additional_django_vars second, so it can override values
