@@ -11,6 +11,8 @@ resource "heroku_app" "heroku" {
   buildpacks = concat(
     [
       # "ianpurvis/heroku-buildpack-version", to provide SOURCE_VERSION, for use by Sentry.
+      # The commit SHA is the preferred release tag for Git-based projects:
+      # https://docs.sentry.io/platforms/python/configuration/releases/#bind-the-version
       # Set it first to provide SOURCE_VERSION for other buildpacks.
       # This buildpack isn't registered, so get it directly from the Git repo, as setting the
       # name alone isn't stable with Terraform.

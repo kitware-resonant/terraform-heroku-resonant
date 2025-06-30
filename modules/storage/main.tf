@@ -48,7 +48,8 @@ resource "aws_s3_bucket_cors_configuration" "storage" {
       "Date",
       "ETag"
     ]
-    max_age_seconds = 600
+    # Caching for 1 day is the longest allowed by typical browsers
+    max_age_seconds = 24 * 60 * 60
   }
 
   cors_rule {
