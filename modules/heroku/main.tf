@@ -8,10 +8,22 @@ resource "heroku_app" "heroku" {
   organization {
     name = data.heroku_team.heroku.name
   }
-  # The buildpack for the primary language must come last
-  # https://devcenter.heroku.com/articles/using-multiple-buildpacks-for-an-app#adding-a-buildpack
-  buildpacks = concat(var.additional_buildpacks, ["heroku/python"])
-  acm        = true # SSL certs for custom domain
+  buildpacks = concat(
+    [
+      # "ianpurvis/heroku-buildpack-version", to provide SOURCE_VERSION, for use by Sentry.
+      # Set it first to provide SOURCE_VERSION for other buildpacks.
+      # This buildpack isn't registered, so get it directly from the Git repo, as setting the
+      # name alone isn't stable with Terraform.
+      "https://github.com/ianpurvis/heroku-buildpack-version.git",
+    ],
+    var.additional_buildpacks,
+    [
+      # The buildpack for the primary language must come last
+      # https://devcenter.heroku.com/articles/using-multiple-buildpacks-for-an-app#adding-a-buildpack
+      "heroku/python",
+    ]
+  )
+  acm = true # SSL certs for custom domain
 
   # Auto-created (by addons) config vars:
   # * CLOUDAMQP_APIKEY
