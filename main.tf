@@ -54,7 +54,7 @@ module "heroku" {
   sensitive_config_vars = merge(
     {
       AWS_SECRET_ACCESS_KEY = aws_iam_access_key.heroku_user.secret
-      DJANGO_EMAIL_URL      = "submission://${urlencode(module.smtp.username)}:${urlencode(module.smtp.password)}@${module.smtp.host}:${module.smtp.port}"
+      DJANGO_EMAIL_URL      = "smtp+tls://${urlencode(module.smtp.username)}:${urlencode(module.smtp.password)}@${module.smtp.host}:${module.smtp.port}"
       DJANGO_SECRET_KEY     = random_string.django_secret.result
     },
     # Pass var.additional_sensitive_django_vars second, so it can override values
