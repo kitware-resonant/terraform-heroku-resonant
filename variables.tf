@@ -116,7 +116,7 @@ variable "heroku_worker_dyno_quantity" {
 variable "heroku_postgresql_plan" {
   type        = string
   nullable    = true
-  default     = "basic"
+  default     = "essential-0"
   description = "The Heroku Postgres add-on plan type, or null to disable."
 }
 
