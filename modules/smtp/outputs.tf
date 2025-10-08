@@ -3,7 +3,7 @@ data "aws_region" "current" {}
 output "host" {
   # https://docs.aws.amazon.com/ses/latest/DeveloperGuide/smtp-connect.html
   # SES is only available in limited regions, but provisioning should fail for other regions
-  value       = "email-smtp.${data.aws_region.current.name}.amazonaws.com"
+  value       = "email-smtp.${data.aws_region.current.region}.amazonaws.com"
   description = "The hostname for the outgoing SMTP server."
 }
 

@@ -4,6 +4,8 @@ terraform {
   required_providers {
     aws = {
       source = "hashicorp/aws"
+      # Required for "data.aws_region...region"
+      version = ">= 6.0"
     }
   }
 }
