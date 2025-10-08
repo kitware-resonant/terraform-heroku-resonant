@@ -40,7 +40,7 @@ module "heroku" {
   config_vars = merge(
     {
       AWS_ACCESS_KEY_ID                  = aws_iam_access_key.heroku_user.id
-      AWS_DEFAULT_REGION                 = data.aws_region.current.name
+      AWS_DEFAULT_REGION                 = data.aws_region.current.region
       DJANGO_ALLOWED_HOSTS               = local.fqdn
       DJANGO_CORS_ALLOWED_ORIGINS        = join(",", var.django_cors_allowed_origins)
       DJANGO_CORS_ALLOWED_ORIGIN_REGEXES = join(",", var.django_cors_allowed_origin_regexes)
