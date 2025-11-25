@@ -27,7 +27,7 @@ resource "aws_route53_record" "smtp_dkim" {
   zone_id = var.route53_zone_id
   name    = "${element(aws_ses_domain_dkim.smtp.dkim_tokens, count.index)}._domainkey.${aws_ses_domain_dkim.smtp.domain}"
   type    = "CNAME"
-  ttl     = "1800"
+  ttl     = 1800
   records = ["${element(aws_ses_domain_dkim.smtp.dkim_tokens, count.index)}.dkim.amazonses.com"]
 }
 

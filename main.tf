@@ -75,7 +75,7 @@ resource "aws_route53_record" "heroku" {
   zone_id = var.route53_zone_id
   name    = var.subdomain_name
   type    = "CNAME"
-  ttl     = "300"
+  ttl     = 300
   records = [module.heroku.cname]
 }
 
@@ -97,7 +97,7 @@ resource "aws_route53_record" "ec2_worker" {
   zone_id = var.route53_zone_id
   name    = "${var.subdomain_name}-worker-${count.index}"
   type    = "A"
-  ttl     = "300"
+  ttl     = 300
   records = [module.ec2_worker[0].public_ips[count.index]]
 }
 
