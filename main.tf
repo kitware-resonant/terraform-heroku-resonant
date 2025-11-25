@@ -25,9 +25,10 @@ module "smtp" {
   route53_zone_id = data.aws_route53_zone.current.zone_id
 }
 
-resource "random_string" "django_secret" {
-  length  = 64
-  special = false
+resource "random_password" "django_secret" {
+  # Django uses 50 characters in "django.core.management.utils.get_random_secret_key",
+  # which should be sufficient: https://stackoverflow.com/a/72595659
+  length = 50
 }
 
 module "heroku" {
@@ -55,7 +56,7 @@ module "heroku" {
     {
       AWS_SECRET_ACCESS_KEY = aws_iam_access_key.heroku_user.secret
       DJANGO_EMAIL_URL      = "smtp+tls://${urlencode(module.smtp.username)}:${urlencode(module.smtp.password)}@${module.smtp.host}:${module.smtp.port}"
-      DJANGO_SECRET_KEY     = random_string.django_secret.result
+      DJANGO_SECRET_KEY     = random_password.django_secret.result
     },
     # Pass var.additional_sensitive_django_vars second, so it can override values
     var.additional_sensitive_django_vars
