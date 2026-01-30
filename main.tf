@@ -29,6 +29,9 @@ resource "random_password" "django_secret" {
   # Django uses 50 characters in "django.core.management.utils.get_random_secret_key",
   # which should be sufficient: https://stackoverflow.com/a/72595659
   length = 50
+  # django-environ fails if a string starts with "$", so just avoid special characters entirely;
+  # Similar issues have surfaced in the past: https://github.com/joke2k/django-environ/issues/490
+  special = false
 }
 
 module "heroku" {
