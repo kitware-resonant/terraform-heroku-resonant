@@ -43,6 +43,9 @@ module "heroku" {
 
   config_vars = merge(
     {
+      # Must limit threads so as not to exhaust postgres connection pool
+      # https://mattbasta.medium.com/django-channels-asgi-and-heroku-e1bc9559330b
+      ASGI_THREADS                       = 5
       AWS_ACCESS_KEY_ID                  = aws_iam_access_key.heroku_user.id
       AWS_DEFAULT_REGION                 = data.aws_region.current.region
       DJANGO_ALLOWED_HOSTS               = local.fqdn
