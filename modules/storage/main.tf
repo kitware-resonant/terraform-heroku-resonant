@@ -135,12 +135,17 @@ data "aws_iam_policy_document" "storage_bucket" {
 data "aws_iam_policy_document" "storage_django" {
   statement {
     actions = [
-      # TODO Figure out minimal set of permissions django storages needs for S3
-      "s3:*",
+      "s3:ListBucket",
     ]
-    resources = [
-      aws_s3_bucket.storage.arn,
-      "${aws_s3_bucket.storage.arn}/*",
+    resources = [aws_s3_bucket.storage.arn]
+  }
+  statement {
+    actions = [
+      "s3:GetObject",
+      "s3:PutObject",
+      "s3:DeleteObject",
+      "s3:AbortMultipartUpload",
     ]
+    resources = ["${aws_s3_bucket.storage.arn}/*"]
   }
 }
