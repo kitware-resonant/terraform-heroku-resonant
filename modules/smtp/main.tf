@@ -1,34 +1,22 @@
-resource "aws_ses_domain_identity" "smtp" {
-  # "www." will also be included as a subdomain,
-  # but specifying it is not allowed:
+locals {
+  # "www." will also be included as a subdomain, but specifying it is not allowed:
   # https://docs.aws.amazon.com/ses/latest/dg/creating-identities.html
-  domain = trimprefix(var.fqdn, "www.")
+  fqdn = trimprefix(var.fqdn, "www.")
 }
 
-resource "aws_route53_record" "smtp_verification" {
-  zone_id = var.route53_zone_id
-  name    = "_amazonses.${aws_ses_domain_identity.smtp.domain}"
-  type    = "TXT"
-  ttl     = "1800"
-  records = [aws_ses_domain_identity.smtp.verification_token]
-}
-
-resource "aws_ses_domain_identity_verification" "smtp_verification" {
-  domain     = aws_ses_domain_identity.smtp.id
-  depends_on = [aws_route53_record.smtp_verification]
-}
-
-resource "aws_ses_domain_dkim" "smtp" {
-  domain = aws_ses_domain_identity.smtp.domain
+resource "aws_sesv2_email_identity" "smtp" {
+  email_identity = local.fqdn
 }
 
 resource "aws_route53_record" "smtp_dkim" {
   count   = 3
   zone_id = var.route53_zone_id
-  name    = "${element(aws_ses_domain_dkim.smtp.dkim_tokens, count.index)}._domainkey.${aws_ses_domain_dkim.smtp.domain}"
+  # "name" and "records" values are documented:
+  # https://docs.aws.amazon.com/ses/latest/dg/send-email-authentication-dkim-easy-managing.html
+  name    = "${one(aws_sesv2_email_identity.smtp.dkim_signing_attributes).tokens[count.index]}._domainkey.${local.fqdn}"
   type    = "CNAME"
   ttl     = 1800
-  records = ["${element(aws_ses_domain_dkim.smtp.dkim_tokens, count.index)}.dkim.amazonses.com"]
+  records = ["${one(aws_sesv2_email_identity.smtp.dkim_signing_attributes).tokens[count.index]}.dkim.amazonses.com"]
 }
 
 # TODO: setup bounce notification to SNS
@@ -52,7 +40,7 @@ resource "aws_iam_user_policy" "smtp" {
 data "aws_iam_policy_document" "smtp" {
   statement {
     # https://docs.aws.amazon.com/ses/latest/DeveloperGuide/control-user-access.html
-    resources = [aws_ses_domain_identity.smtp.arn]
+    resources = [aws_sesv2_email_identity.smtp.arn]
     actions   = ["ses:SendRawEmail"]
   }
 }
