@@ -1,11 +1,11 @@
 data "aws_region" "current" {} # auto-populated
 
 locals {
-  fqdn = "${var.subdomain_name}.${data.aws_route53_zone.current.name}"
+  heroku_fqdn = "${var.subdomain_name}.${data.aws_route53_zone.current.name}"
   # Variable defaults cannot be directly based on other variables
   heroku_app_name           = coalesce(var.heroku_app_name, var.project_slug)
   storage_bucket_name       = coalesce(var.storage_bucket_name, "${var.project_slug}-storage")
-  django_default_from_email = coalesce(var.django_default_from_email, "admin@${local.fqdn}")
+  django_default_from_email = coalesce(var.django_default_from_email, "admin@${data.aws_route53_zone.current.name}")
 }
 
 data "aws_route53_zone" "current" {
@@ -20,7 +20,8 @@ module "storage" {
 module "smtp" {
   source = "./modules/smtp"
 
-  fqdn            = local.fqdn
+  # Setup SMTP at the root domain, for consolidated sending reputation and cleaner branding
+  fqdn            = data.aws_route53_zone.current.name
   project_slug    = var.project_slug
   route53_zone_id = data.aws_route53_zone.current.zone_id
 }
@@ -39,13 +40,13 @@ module "heroku" {
 
   team_name = var.heroku_team_name
   app_name  = local.heroku_app_name
-  fqdn      = local.fqdn
+  fqdn      = local.heroku_fqdn
 
   config_vars = merge(
     {
       AWS_ACCESS_KEY_ID                  = aws_iam_access_key.heroku_user.id
       AWS_DEFAULT_REGION                 = data.aws_region.current.region
-      DJANGO_ALLOWED_HOSTS               = local.fqdn
+      DJANGO_ALLOWED_HOSTS               = local.heroku_fqdn
       DJANGO_CORS_ALLOWED_ORIGINS        = join(",", var.django_cors_allowed_origins)
       DJANGO_CORS_ALLOWED_ORIGIN_REGEXES = join(",", var.django_cors_allowed_origin_regexes)
       DJANGO_DEFAULT_FROM_EMAIL          = local.django_default_from_email
