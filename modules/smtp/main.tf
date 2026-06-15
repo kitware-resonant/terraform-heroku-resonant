@@ -58,7 +58,11 @@ resource "aws_iam_user_policy" "smtp" {
 data "aws_iam_policy_document" "smtp" {
   statement {
     # https://docs.aws.amazon.com/ses/latest/DeveloperGuide/control-user-access.html
-    resources = [aws_sesv2_email_identity.smtp.arn]
-    actions   = ["ses:SendRawEmail"]
+    resources = [
+      # Both are required
+      aws_sesv2_email_identity.smtp.arn,
+      aws_sesv2_configuration_set.smtp.arn,
+    ]
+    actions = ["ses:SendRawEmail"]
   }
 }
