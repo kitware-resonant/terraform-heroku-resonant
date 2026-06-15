@@ -15,3 +15,10 @@ variable "fqdn" {
   nullable    = false
   description = "The fully-qualified domain name for outgoing emails."
 }
+
+variable "dmarc_boundary" {
+  type        = bool
+  nullable    = false
+  default     = false
+  description = "Prevent a parent domain's DMARC policy from overriding this one."
+}

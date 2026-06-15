@@ -19,6 +19,22 @@ resource "aws_route53_record" "smtp_dkim" {
   records = ["${one(aws_sesv2_email_identity.smtp.dkim_signing_attributes).tokens[count.index]}.dkim.amazonses.com"]
 }
 
+# SPF is not implemented: DMARC only requires one of SPF or DKIM to align, and DKIM is sufficient.
+# SES uses its own MAIL FROM domain by default, so SPF alignment would require a custom MAIL FROM:
+# https://docs.aws.amazon.com/ses/latest/dg/send-email-authentication-spf.html
+
+resource "aws_route53_record" "smtp_dmarc" {
+  zone_id = var.route53_zone_id
+  name    = "_dmarc.${local.fqdn}"
+  type    = "TXT"
+  ttl     = 300
+  records = [join("", concat(
+    ["v=DMARC1; p=quarantine;"],
+    # "psd" is defined by the new https://datatracker.ietf.org/doc/html/rfc9989
+    var.dmarc_boundary ? [" psd=n;"] : [],
+  ))]
+}
+
 # TODO: setup bounce notification to SNS
 # https://www.terraform.io/docs/providers/aws/r/ses_identity_notification_topic.html
 

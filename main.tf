@@ -24,6 +24,7 @@ module "smtp" {
   fqdn            = data.aws_route53_zone.current.name
   project_slug    = var.project_slug
   route53_zone_id = data.aws_route53_zone.current.zone_id
+  dmarc_boundary  = true
 }
 
 resource "random_password" "django_secret" {
