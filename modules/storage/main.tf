@@ -41,12 +41,12 @@ resource "aws_s3_bucket_cors_configuration" "storage" {
       "*"
     ]
     expose_headers = [
-      # https://docs.aws.amazon.com/AmazonS3/latest/API/RESTCommonResponseHeaders.html
-      "Content-Length",
-      "Content-Type",
-      "Connection",
+      # Always exposed: https://developer.mozilla.org/en-US/docs/Glossary/CORS-safelisted_response_header
+      # Useful for Cloud Optimized GeoTIFF
+      "Content-Range",
+      # May be useful for local caching
       "Date",
-      "ETag"
+      "ETag",
     ]
     # Caching for 1 day is the longest allowed by typical browsers
     max_age_seconds = 24 * 60 * 60
@@ -61,15 +61,8 @@ resource "aws_s3_bucket_cors_configuration" "storage" {
     allowed_origins = ["*"]
 
     expose_headers = [
-      # https://docs.aws.amazon.com/AmazonS3/latest/API/RESTCommonResponseHeaders.html
-      # Exclude "x-amz-request-id" and "x-amz-id-2", as they are only for debugging
-      "Content-Length",
-      "Connection",
       "Date",
       "ETag",
-      "Server",
-      "x-amz-delete-marker",
-      "x-amz-version-id",
     ]
 
     max_age_seconds = 600
