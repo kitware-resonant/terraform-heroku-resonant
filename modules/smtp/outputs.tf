@@ -22,3 +22,8 @@ output "password" {
   sensitive   = true
   description = "The password for the outgoing SMTP server."
 }
+
+output "failures_topic_arn" {
+  value       = aws_sns_topic.smtp_sns.arn
+  description = "The SNS topic ARN for bounce, complaint, and reject notifications."
+}

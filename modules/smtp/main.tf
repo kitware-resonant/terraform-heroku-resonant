@@ -4,8 +4,13 @@ locals {
   fqdn = trimprefix(var.fqdn, "www.")
 }
 
+resource "aws_sesv2_configuration_set" "smtp" {
+  configuration_set_name = "${var.project_slug}-smtp"
+}
+
 resource "aws_sesv2_email_identity" "smtp" {
-  email_identity = local.fqdn
+  email_identity         = local.fqdn
+  configuration_set_name = aws_sesv2_configuration_set.smtp.configuration_set_name
 }
 
 resource "aws_route53_record" "smtp_dkim" {
@@ -34,9 +39,6 @@ resource "aws_route53_record" "smtp_dmarc" {
     var.dmarc_boundary ? [" psd=n;"] : [],
   ))]
 }
-
-# TODO: setup bounce notification to SNS
-# https://www.terraform.io/docs/providers/aws/r/ses_identity_notification_topic.html
 
 resource "aws_iam_user" "smtp" {
   name = "${var.project_slug}-smtp"
