@@ -33,3 +33,8 @@ output "ec2_worker_iam_role_id" {
   value       = var.ec2_worker_instance_quantity > 0 ? module.ec2_worker[0].iam_role_id : null
   description = "The ID of the instance profile IAM role for the EC2 workers."
 }
+
+output "smtp_failures_topic_arn" {
+  value       = module.smtp.failures_topic_arn
+  description = "The SNS topic ARN for SMTP bounce, complaint, and reject notifications."
+}
