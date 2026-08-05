@@ -33,10 +33,12 @@ resource "aws_route53_record" "smtp_dmarc" {
   name    = "_dmarc.${local.fqdn}"
   type    = "TXT"
   ttl     = 300
-  records = [join("", concat(
-    ["v=DMARC1; p=quarantine;"],
+  records = [join("; ", concat(
+    ["v=DMARC1"],
+    ["p=quarantine"],
     # "psd" is defined by the new https://datatracker.ietf.org/doc/html/rfc9989
-    var.dmarc_boundary ? [" psd=n;"] : [],
+    var.dmarc_boundary ? ["psd=n"] : [],
+    var.dmarc_rua != null ? ["rua=${var.dmarc_rua}"] : []
   ))]
 }
 
