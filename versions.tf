@@ -1,5 +1,6 @@
 terraform {
-  required_version = ">= 1.1"
+  # 1.9 is required for variable validation which references other variables
+  required_version = ">= 1.9"
 
   required_providers {
     aws = {
