@@ -22,3 +22,10 @@ variable "dmarc_boundary" {
   default     = false
   description = "Prevent a parent domain's DMARC policy from overriding this one."
 }
+
+variable "dmarc_rua" {
+  type        = string
+  nullable    = true
+  default     = null
+  description = "Reporting URI(s) (starting with \"mailto:\") for DMARC aggregate feedback reports."
+}
