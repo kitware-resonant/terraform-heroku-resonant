@@ -20,7 +20,7 @@ resource "aws_route53_record" "smtp_dkim" {
   # https://docs.aws.amazon.com/ses/latest/dg/send-email-authentication-dkim-easy-managing.html
   name    = "${one(aws_sesv2_email_identity.smtp.dkim_signing_attributes).tokens[count.index]}._domainkey.${local.fqdn}"
   type    = "CNAME"
-  ttl     = 1800
+  ttl     = 300
   records = ["${one(aws_sesv2_email_identity.smtp.dkim_signing_attributes).tokens[count.index]}.dkim.amazonses.com"]
 }
 
