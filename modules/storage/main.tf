@@ -126,7 +126,6 @@ data "aws_iam_policy_document" "storage_bucket" {
 }
 
 data "aws_iam_policy_document" "storage_django" {
-  # s3:ListBucket isn't needed: only django-storages' `listdir()` requires it, which is never called
   statement {
     actions = [
       # Reading files, `head_object` for size/modified_time/exists, presigned download URLs
@@ -139,5 +138,13 @@ data "aws_iam_policy_document" "storage_django" {
       "s3:AbortMultipartUpload",
     ]
     resources = ["${aws_s3_bucket.storage.arn}/*"]
+  }
+  statement {
+    actions = [
+      # Without this, `head_object` on a missing key returns 403 instead of 404, so
+      # django-storages' `exists()` raises instead of returning False
+      "s3:ListBucket",
+    ]
+    resources = [aws_s3_bucket.storage.arn]
   }
 }
